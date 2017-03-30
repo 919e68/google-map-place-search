@@ -139,6 +139,8 @@
           console.log(place)
           
           $scope.name = place.name
+          $('#address').val(place.name)
+          
           $scope.country = getAddress(place.address_components, 'country')
           $scope.city = getAddress(place.address_components, 'locality')
           $scope.postcode = getAddress(place.address_components, 'postal_code')
