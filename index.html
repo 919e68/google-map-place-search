@@ -11,12 +11,13 @@
     <style>
     .container {
       padding: 25px;
-      max-width: 600px;
+      max-width: 720px;
     }
 
     #map {
-      height: 1000px;
-      width: 1000px;
+      height: 488px;
+      width: 100%;
+      margin-top: 25px;
     }
 
     h5 {
@@ -89,7 +90,7 @@
         </div>
 
         <div class="col-md-6">
-          
+          <div id="map"></div>
         </div>
       </div>
     </div>
@@ -115,6 +116,19 @@
     .controller('SampleController', function($scope) {
       console.log('Sample Run')
 
+      $scope.loadMap = function(lat, lng) {
+        var center = { lat: lat, lng: lng }
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: center
+        })
+        var marker = new google.maps.Marker({
+          position: center,
+          map: map
+        })
+      }
+
+      $scope.loadMap(39.639538, -101.821289)
       var input = document.getElementById('address')
       var searchBox = new google.maps.places.SearchBox(input)
       searchBox.addListener('places_changed', function() {
@@ -136,8 +150,13 @@
           $scope.province = (region + ' ' + province).trim()
 
           $scope.$apply()
+          $scope.loadMap(place.geometry.location.lat(), place.geometry.location.lng())
         }
       })
+
+
+
+
     })
   </script>
 </html>
