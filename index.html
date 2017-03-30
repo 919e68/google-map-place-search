@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Places Searchbox</title>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-overide.css">
+
+    <style>
+    .container {
+      padding: 25px;
+      max-width: 600px;
+    }
+
+    #map {
+      height: 1000px;
+      width: 1000px;
+    }
+
+    h5 {
+      font-weight: bold;
+      padding: 5px 15px;
+    }
+    </style>
+
+    <script src="//code.jquery.com/jquery-latest.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAUkF2lnyQhh6sMCyEp1egoHWzEnE5fSOY&libraries=places"></script>
+  </head>
+  <body ng-app="sample">
+    <div class="container" ng-controller="SampleController">
+      <div class="row">
+        <div class="col-md-12">
+          <div>
+            <div class="form-group">
+              <label>Place</label>
+              <input ng-model="name" id="address" class="form-control" type="text" placeholder="Search a place">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Estimated Room Nights</label>
+            <input ng-model="duration" class="form-control" type="text">
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Estimated Spend</label>
+            <input ng-model="spent" class="form-control" type="text">
+          </div>
+        </div>
+
+        <h5>Address / Location</h5>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Country</label>
+            <input ng-model="country" class="form-control" type="text">
+          </div>
+
+          <div class="form-group">
+            <label>Province</label>
+            <input ng-model="province" class="form-control" type="text">
+          </div>
+
+          <div class="form-group">
+            <label>City</label>
+            <input ng-model="city" class="form-control" type="text">
+          </div>
+
+          <div class="form-group">
+            <label>Postal Code</label>
+            <input ng-model="postcode" class="form-control" type="text">
+          </div>
+
+          <div class="form-group">
+            <label>Address 1</label>
+            <input ng-model="address1" class="form-control" type="text">
+          </div>
+
+          <div class="form-group">
+            <label>Address 2 (optional)</label>
+            <input ng-model="address2" class="form-control" type="text">
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
+  <script type="text/javascript">
+  function getAddress(addressComponents, type) {
+    var result = ''
+    for (var i in addressComponents) {
+      var comp = addressComponents[i]
+      if (comp.types.indexOf(type) > -1) {
+        result = comp.long_name
+        break
+      }
+    }
+    return result
+  }
+
+  </script>
+  <script>
+    angular.module('sample', [])
+    .controller('SampleController', function($scope) {
+      console.log('Sample Run')
+
+      var input = document.getElementById('address')
+      var searchBox = new google.maps.places.SearchBox(input)
+      searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces()
+
+        if (places.length > 0) {
+          var place = places[0]
+          console.log(place)
+          
+          $scope.name = place.name
+          $scope.country = getAddress(place.address_components, 'country')
+          $scope.city = getAddress(place.address_components, 'locality')
+          $scope.postcode = getAddress(place.address_components, 'postal_code')
+          $scope.address1 = getAddress(place.address_components, 'premise')
+
+          var region = getAddress(place.address_components, 'administrative_area_level_1')
+          var province = getAddress(place.address_components, 'administrative_area_level_2')
+
+          $scope.province = (region + ' ' + province).trim()
+
+          $scope.$apply()
+        }
+      })
+    })
+  </script>
+</html>
